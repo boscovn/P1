@@ -161,3 +161,4 @@ if __name__ == '__main__':
     proveedores = db.proveedores
     p = Provider(**proveedores.find_one())
     print (p.direcciones_almacenes)
+#mongoimport --db data --collection clientes --drop --file ~/Downloads/clientes(1).json

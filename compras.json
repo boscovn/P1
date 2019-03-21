@@ -1,0 +1,1 @@
+{"_id":1.0,"cliente":"Juan","producto":"mobil","fecha":{"$date":"2019-03-21T19:46:36.503Z"},"direccion":["Madrid"]}

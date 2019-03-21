@@ -1,0 +1,1 @@
+{"_id":1.0,"nombre":"Juan","direcciones_facturacion":["Madrid","Toledo"],"direcciones_envio":["Madrid"],"tarjetas":[{"visa":1.233456789e+09}],"fecha_de_alta":{"$date":"2019-03-21T19:53:14.704Z"},"fecha_ultimo_acceso":{"$date":"2019-03-21T19:53:14.704Z"}}
