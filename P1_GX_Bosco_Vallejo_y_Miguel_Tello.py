@@ -34,6 +34,8 @@ class ModelCursor(object):
             documento que se itera.
             command_cursor (CommandCursor) -- Cursor de pymongo
         """
+        self.model_class = model_class
+        self.command_cursor = command_cursor
         #TODO
         #pass #No olvidar eliminar esta linea una vez implementado
 
@@ -63,7 +65,18 @@ class Model(object):
 
     def __init__(self, **kwargs):
         for k, v in kwargs:
-            self.k = v
+            if k not in required_vars:
+                if k not in admissible_vars:
+                    print ("No admitida")
+                    #TODO excepcion
+                else:
+                    self.k = v
+            else:
+                required_vars.remove(k)
+                self.k = v
+        if required_vars:
+            print ("No tiene lo necesario")
+            #TODO excepcion
         #TODO
         pass #No olvidar eliminar esta linea una vez implementado
 
