@@ -66,7 +66,7 @@ class Model(object):
     db = None
 
     def __init__(self, **kwargs):
-        for k, v in kwargs:
+        for k, v in kwargs.items():
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
                     print ("No admitida")
@@ -74,7 +74,7 @@ class Model(object):
                 else:
                     self.k = v
             else:
-                required_vars.remove(k)
+                self.required_vars.remove(k)
                 self.k = v
         if self.required_vars:
             print ("No tiene lo necesario")
@@ -125,4 +125,4 @@ Q1 = []
 # Q2: etc...
 
 if __name__ == '__main__':
-    cliente = Client(n='2')
+    cliente = Client(n="2", i="0")
