@@ -9,7 +9,7 @@ necvars_product = ["nombre", "codigo", "precio", "precio_IVA", "envio", "descuen
 advars_product = []
 necvars_sale = ["productos", "cliente", "precio", "fecha", "direccion_envio"]
 advars_sale = []
-necvars_provider = ["nombre", "direcciones_almacenes"]
+necvars_provider = ["_id", "nombre", "direcciones_almacenes"]
 advars_provider = []
 def getCityGeoJSON(adress):
     """ Devuelve las coordenadas de una direcciion a partir de un str de la direccion
@@ -74,10 +74,10 @@ class Model(object):
                 if k not in self.admissible_vars:
                     print ("Variable {} no admitida".format(k))
                 else:
-                    self.k = v
+                    setattr(self, k, v)
             else:
                 self.required_vars.remove(k)
-                self.k = v
+                setattr(self, k, v)
         if self.required_vars:
             print ("No tiene lo necesario")
             #TODO excepcion
@@ -155,4 +155,9 @@ Q1 = []
 # Q2: etc...
 
 if __name__ == '__main__':
-    cliente = Client(n="2", i="0")
+    #cliente = Client(n="2", i="0")
+    client = MongoClient()
+    db = client.data
+    proveedores = db.proveedores
+    p = Provider(**proveedores.find_one())
+    print (p.direcciones_almacenes)
