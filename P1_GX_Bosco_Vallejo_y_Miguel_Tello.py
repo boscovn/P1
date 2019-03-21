@@ -5,6 +5,12 @@ from time import sleep
 adresses = {}
 necvars_client = []
 advars_client = []
+necvars_product = []
+advars_product = []
+necvars_sale = []
+advars_sale = []
+necvars_provider = []
+advars_provider = []
 def getCityGeoJSON(adress):
     """ Devuelve las coordenadas de una direcciion a partir de un str de la direccion
     Argumentos:
@@ -56,10 +62,7 @@ class ModelCursor(object):
 
 class Model(object):
     """ Prototipo de la clase modelo
-        Copiar y pegar tantas veces como modelos se deseen crear (cambiando
-        el nombre Model, por la entidad correspondiente), o bien crear tantas
-        clases como modelos se deseen que hereden de esta clase. Este segundo
-        metodo puede resultar mas compleja
+        El resto de clases modelo heredan de esta
     """
     required_vars = []
     admissible_vars = []
@@ -69,8 +72,7 @@ class Model(object):
         for k, v in kwargs.items():
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
-                    print ("No admitida")
-                    #TODO excepcion
+                    print ("Variable {} no admitida".format(k))
                 else:
                     self.k = v
             else:
@@ -112,11 +114,39 @@ class Model(object):
 
 
 class Client(Model):
-    """docstring for ."""
+    """Clase cliente, hereda de Model"""
     def __init__(self, **kwargs):
         super().required_vars.extend(necvars_client)
         super().admissible_vars.extend(advars_client)
         super().__init__(**kwargs)
+
+
+class Product(Model):
+    """Clase producto, hereda de Model"""
+    def __init__(self, **kwargs):
+        super().required_vars.extend(necvars_product)
+        super().admissible_vars.extend(advars_product)
+        super().__init__(**kwargs)
+
+
+class Sale(Model):
+    """Clase venta, hereda de Model"""
+    def __init__(self, **kwargs):
+        super().required_vars.extend(necvars_sale)
+        super().admissible_vars.extend(advars_sale)
+        super().__init__(**kwargs)
+
+    def allocate():
+        pass
+
+
+class Provider(Model):
+    """Clase proveedor, hereda de Model"""
+    def __init__(self, **kwargs):
+        super().required_vars.extend(necvars_provider)
+        super().admissible_vars.extend(advars_provider)
+        super().__init__(**kwargs)
+
 
 # Q1: Listado de todas las compras de un cliente
 nombre_cliente = "Definir"
