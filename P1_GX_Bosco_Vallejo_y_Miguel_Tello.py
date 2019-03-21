@@ -3,13 +3,13 @@ from pymongo import MongoClient
 import json
 from time import sleep
 adresses = {}
-necvars_client = []
+necvars_client = ["nombre", "direcciones_de_facturacion", "direcciones_de_envio", "tarjetas", "fecha_alta", "fecha_ultimo_acceso"]
 advars_client = []
-necvars_product = []
+necvars_product = ["nombre", "codigo", "precio", "precio_IVA", "envio", "descuento_por_fechas", "dimensiones", "peso", "proveedores"]
 advars_product = []
-necvars_sale = []
+necvars_sale = ["productos", "cliente", "precio", "fecha", "direccion_envio"]
 advars_sale = []
-necvars_provider = []
+necvars_provider = ["nombre", "direcciones_almacenes"]
 advars_provider = []
 def getCityGeoJSON(adress):
     """ Devuelve las coordenadas de una direcciion a partir de un str de la direccion
