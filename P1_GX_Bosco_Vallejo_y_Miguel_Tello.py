@@ -1,8 +1,10 @@
 __author__ = 'Bosco_Vallejo-Nágera y Miguel Tello'
-adresses = {}
 from pymongo import MongoClient
 import json
 from time import sleep
+adresses = {}
+necvars_client = []
+advars_client = []
 def getCityGeoJSON(adress):
     """ Devuelve las coordenadas de una direcciion a partir de un str de la direccion
     Argumentos:
@@ -65,8 +67,8 @@ class Model(object):
 
     def __init__(self, **kwargs):
         for k, v in kwargs:
-            if k not in required_vars:
-                if k not in admissible_vars:
+            if k not in self.required_vars:
+                if k not in self.admissible_vars:
                     print ("No admitida")
                     #TODO excepcion
                 else:
@@ -74,12 +76,9 @@ class Model(object):
             else:
                 required_vars.remove(k)
                 self.k = v
-        if required_vars:
+        if self.required_vars:
             print ("No tiene lo necesario")
             #TODO excepcion
-        #TODO
-        pass #No olvidar eliminar esta linea una vez implementado
-
 
     def save(self):
         #TODO
@@ -106,11 +105,18 @@ class Model(object):
             vars_path (str) -- ruta al archivo con la definicion de variables
             del modelo.
         """
+        self.db = db
         #TODO
         # cls() es el constructor de esta clase
         pass #No olvidar eliminar esta linea una vez implementado
 
 
+class Client(Model):
+    """docstring for ."""
+    def __init__(self, **kwargs):
+        super().required_vars.extend(necvars_client)
+        super().admissible_vars.extend(advars_client)
+        super().__init__(**kwargs)
 
 # Q1: Listado de todas las compras de un cliente
 nombre_cliente = "Definir"
@@ -119,4 +125,4 @@ Q1 = []
 # Q2: etc...
 
 if __name__ == '__main__':
-    print ()
+    cliente = Client(n='2')
