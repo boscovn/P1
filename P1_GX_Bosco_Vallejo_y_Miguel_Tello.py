@@ -1,7 +1,8 @@
-__author__ = 'Bosco_Vallejo-Nágera'
-
+__author__ = 'Bosco_Vallejo-Nágera y Miguel Tello'
+adresses = {}
 from pymongo import MongoClient
-
+import json
+from time import sleep
 def getCityGeoJSON(adress):
     """ Devuelve las coordenadas de una direcciion a partir de un str de la direccion
     Argumentos:
@@ -9,12 +10,16 @@ def getCityGeoJSON(adress):
     Return:
         (str) -- GeoJSON
     """
-    from geopy.geocoders import Nominatim
-    geolocator = Nominatim()
-    location = geolocator.geocode(adress)
-    #TODO
-    # Devolver GeoJSON de tipo punto con la latitud y longitud almacenadas
-    # en las variables location.latitude y location.longitude
+    if adress in adresses:
+        return adresses[adress]
+    else:
+        from geopy.geocoders import Nominatim
+        geolocator = Nominatim(user_agent="practica-abbdd")
+        location = geolocator.geocode(adress)
+        sleep(5)
+        geojson = json.dumps({'type': 'Point', 'coordinates' : [location.latitude, location.longitude]})
+        adresses[adress] = geojson
+        return geojson
 
 class ModelCursor(object):
     """ Cursor para iterar sobre los documentos del resultado de una
@@ -30,7 +35,7 @@ class ModelCursor(object):
             command_cursor (CommandCursor) -- Cursor de pymongo
         """
         #TODO
-        pass #No olvidar eliminar esta linea una vez implementado
+        #pass #No olvidar eliminar esta linea una vez implementado
 
     def next(self):
         """ Devuelve el siguiente documento en forma de modelo
@@ -57,6 +62,8 @@ class Model(object):
     db = None
 
     def __init__(self, **kwargs):
+        for k, v in kwargs:
+            self.k = v
         #TODO
         pass #No olvidar eliminar esta linea una vez implementado
 
@@ -73,6 +80,7 @@ class Model(object):
     def query(cls, query):
         """ Devuelve un cursor de modelos
         """
+        cls()
         #TODO
         # cls() es el constructor de esta clase
         pass #No olvidar eliminar esta linea una vez implementado
@@ -90,6 +98,7 @@ class Model(object):
         pass #No olvidar eliminar esta linea una vez implementado
 
 
+
 # Q1: Listado de todas las compras de un cliente
 nombre_cliente = "Definir"
 Q1 = []
@@ -97,7 +106,4 @@ Q1 = []
 # Q2: etc...
 
 if __name__ == '__main__':
-    #TODO
-    client = MongoClient()
-    db = client.DATA
-    collection = db.main_collection
+    print ()
