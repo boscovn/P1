@@ -26,43 +26,28 @@ def getCityGeoJSON(adress):
         adresses[adress] = geojson
         return geojson
 
-class ModelCursor(object):
+class ModelCursor:
     """ Cursor para iterar sobre los documentos del resultado de una
     consulta. Los documentos deben ser devueltos en forma de objetos
     modelo.
     """
 
     def __init__(self, model_class, command_cursor):
-        """ Inicializa ModelCursor
-        Argumentos:
-            model_class (class) -- Clase para crear los modelos del
-            documento que se itera.
-            command_cursor (CommandCursor) -- Cursor de pymongo
-        """
         self.model_class = model_class
         self.command_cursor = command_cursor
-        #TODO
-        #pass #No olvidar eliminar esta linea una vez implementado
 
     def next(self):
         """ Devuelve el siguiente documento en forma de modelo
         """
-        #TODO
-        pass #No olvidar eliminar esta linea una vez implementado
+        return self.model_class(**self.command_cursor.next())
 
     @property
     def alive(self):
         """True si existen más modelos por devolver, False en caso contrario
         """
-        #TODO
-        pass #No olvidar eliminar esta linea una vez implementado
+        return self.command_cursor.alive
 
-class Model(object):
-    """ Prototipo de la clase modelo
-        El resto de clases modelo heredan de esta
-    """
-    required_vars = []
-    admissible_vars = []
+class Model:
     db = None
 
     def __init__(self, **kwargs):
@@ -83,7 +68,9 @@ class Model(object):
             #TODO excepcion
 
     def save(self):
-        #TODO
+        doc = {}
+
+        db[collection].insert_one(self)
         pass #No olvidar eliminar esta linea una vez implementado
 
     def update(self, **kwargs):
@@ -94,19 +81,11 @@ class Model(object):
     def query(cls, query):
         """ Devuelve un cursor de modelos
         """
-        cls()
-        #TODO
-        # cls() es el constructor de esta clase
-        pass #No olvidar eliminar esta linea una vez implementado
+        cursor = db[collection].find(query)
+        return ModelCursor(cls, cursor)
 
     @classmethod
     def init_class(cls, db, vars_path):
-        """ Inicializa las variables de clase en la inicializacion del sistema.
-        Argumentos:
-            db (MongoClient) -- Conexion a la base de datos.
-            vars_path (str) -- ruta al archivo con la definicion de variables
-            del modelo.
-        """
         cls.db = db
         import configparser
         config = configparser.ConfigParser(allow_no_value = True)
@@ -116,46 +95,47 @@ class Model(object):
 
 
 class Client(Model):
-    """Clase cliente, hereda de Model"""
     required_vars = []
     admissible_vars = []
+    collection = 'clientes'
 
 
 class Product(Model):
-    """Clase producto, hereda de Model"""
     required_vars = []
     admissible_vars = []
+    collection = 'productos'
 
 
 class Sale(Model):
-    """Clase venta, hereda de Model"""
     required_vars = []
     admissible_vars = []
+    collection = 'ventas'
     def allocate():
         pass
 
 
 class Provider(Model):
-    """Clase proveedor, hereda de Model"""
     required_vars = []
     admissible_vars = []
-    #def __init__(self, **kwargs):
-    #    super().__init__(**kwargs)
+    collection = 'proveedores'
 
+client = MongoClient()
+db = client.data
+Provider.init_class(db, PROVIDER_VARS_PATH)
+Client.init_class(db, CLIENT_VARS_PATH)
+Sale.init_class(db, SALE_VARS_PATH)
+Product.init_class(db, PRODUCT_VARS_PATH)
 
 # Q1: Listado de todas las compras de un cliente
 nombre_cliente = "Definir"
 Q1 = []
-
 # Q2: etc...
 
 if __name__ == '__main__':
-    client = MongoClient()
-    db = client.data
-    Provider.init_class(db, PROVIDER_VARS_PATH)
-    Client.init_class(db, CLIENT_VARS_PATH)
-    Sale.init_class(db, SALE_VARS_PATH)
-    Product.init_class(db, PRODUCT_VARS_PATH)
-    proveedores = db.proveedores
+    pu = 'proveedores'
+    proveedores = db[pu]
     p = Provider(**proveedores.find_one())
     print (p.direcciones)
+    findeo = proveedores.find({"_id": p._id})
+    n = ModelCursor(Provider, findeo)
+    y = n.next()
