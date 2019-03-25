@@ -3,7 +3,11 @@ from pymongo import MongoClient
 import json
 from time import sleep
 adresses = {}
-
+CLIENT_VARS_PATH = "Vars/client.ini"
+PRODUCT_VARS_PATH = "Vars/product.ini"
+PROVIDER_VARS_PATH = "Vars/provider.ini"
+SALE_VARS_PATH = "Vars/sale.ini"
+SLEEP_TIME = 5
 def getCityGeoJSON(adress):
     """ Devuelve las coordenadas de una direcciion a partir de un str de la direccion
     Argumentos:
@@ -17,7 +21,7 @@ def getCityGeoJSON(adress):
         from geopy.geocoders import Nominatim
         geolocator = Nominatim(user_agent="practica-abbdd")
         location = geolocator.geocode(adress)
-        sleep(5)
+        sleep(SLEEP_TIME)
         geojson = json.dumps({'type': 'Point', 'coordinates' : [location.latitude, location.longitude]})
         adresses[adress] = geojson
         return geojson
@@ -63,7 +67,7 @@ class Model(object):
 
     def __init__(self, **kwargs):
         required_check = []
-        required_check.expand(self.required_vars)
+        required_check.extend(self.required_vars)
         for k, v in kwargs.items():
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
@@ -103,11 +107,13 @@ class Model(object):
             vars_path (str) -- ruta al archivo con la definicion de variables
             del modelo.
         """
-        self.db = db
-        vars_path
-        #TODO
-        # cls() es el constructor de esta clase
-        pass #No olvidar eliminar esta linea una vez implementado
+        cls.db = db
+        import configparser
+        config = configparser.ConfigParser(allow_no_value = True)
+        config.read(vars_path)
+        cls.required_vars.extend(config['Required Variables'])
+        print(cls.required_vars)
+        cls.admissible_vars.extend(config['Admitted Variables'])
 
 
 class Client(Model):
@@ -147,7 +153,8 @@ if __name__ == '__main__':
     #cliente = Client(n="2", i="0")
     client = MongoClient()
     db = client.data
+    Provider.init_class(db, PROVIDER_VARS_PATH)
     proveedores = db.proveedores
     p = Provider(**proveedores.find_one())
-    print (p.direcciones_almacenes)
+    print (p.direcciones)
 #mongoimport --db data --collection clientes --drop --file ~/Downloads/clientes(1).json
