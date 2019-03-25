@@ -3,14 +3,7 @@ from pymongo import MongoClient
 import json
 from time import sleep
 adresses = {}
-necvars_client = ["nombre", "direcciones_de_facturacion", "direcciones_de_envio", "tarjetas", "fecha_alta", "fecha_ultimo_acceso"]
-advars_client = []
-necvars_product = ["nombre", "codigo", "precio", "precio_IVA", "envio", "descuento_por_fechas", "dimensiones", "peso", "proveedores"]
-advars_product = []
-necvars_sale = ["productos", "cliente", "precio", "fecha", "direccion_envio"]
-advars_sale = []
-necvars_provider = ["_id", "nombre", "direcciones_almacenes"]
-advars_provider = []
+
 def getCityGeoJSON(adress):
     """ Devuelve las coordenadas de una direcciion a partir de un str de la direccion
     Argumentos:
@@ -69,6 +62,8 @@ class Model(object):
     db = None
 
     def __init__(self, **kwargs):
+        required_check = []
+        required_check.expand(self.required_vars)
         for k, v in kwargs.items():
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
@@ -76,10 +71,11 @@ class Model(object):
                 else:
                     setattr(self, k, v)
             else:
-                self.required_vars.remove(k)
+                required_check.remove(k)
                 setattr(self, k, v)
-        if self.required_vars:
-            print ("No tiene lo necesario")
+        if required_check:
+            print ("No tiene lo necesario, faltan variables: ")
+            print (required_check)
             #TODO excepcion
 
     def save(self):
@@ -100,7 +96,7 @@ class Model(object):
         pass #No olvidar eliminar esta linea una vez implementado
 
     @classmethod
-    def init_class(cls, db, vars_path="model_name.vars"):
+    def init_class(cls, db, vars_path):
         """ Inicializa las variables de clase en la inicializacion del sistema.
         Argumentos:
             db (MongoClient) -- Conexion a la base de datos.
@@ -108,6 +104,7 @@ class Model(object):
             del modelo.
         """
         self.db = db
+        vars_path
         #TODO
         # cls() es el constructor de esta clase
         pass #No olvidar eliminar esta linea una vez implementado
@@ -116,24 +113,18 @@ class Model(object):
 class Client(Model):
     """Clase cliente, hereda de Model"""
     def __init__(self, **kwargs):
-        super().required_vars.extend(necvars_client)
-        super().admissible_vars.extend(advars_client)
         super().__init__(**kwargs)
 
 
 class Product(Model):
     """Clase producto, hereda de Model"""
     def __init__(self, **kwargs):
-        super().required_vars.extend(necvars_product)
-        super().admissible_vars.extend(advars_product)
         super().__init__(**kwargs)
 
 
 class Sale(Model):
     """Clase venta, hereda de Model"""
     def __init__(self, **kwargs):
-        super().required_vars.extend(necvars_sale)
-        super().admissible_vars.extend(advars_sale)
         super().__init__(**kwargs)
 
     def allocate():
@@ -143,8 +134,6 @@ class Sale(Model):
 class Provider(Model):
     """Clase proveedor, hereda de Model"""
     def __init__(self, **kwargs):
-        super().required_vars.extend(necvars_provider)
-        super().admissible_vars.extend(advars_provider)
         super().__init__(**kwargs)
 
 
