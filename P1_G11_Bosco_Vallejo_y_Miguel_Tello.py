@@ -112,35 +112,35 @@ class Model(object):
         config = configparser.ConfigParser(allow_no_value = True)
         config.read(vars_path)
         cls.required_vars.extend(config['Required Variables'])
-        print(cls.required_vars)
         cls.admissible_vars.extend(config['Admitted Variables'])
 
 
 class Client(Model):
     """Clase cliente, hereda de Model"""
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    required_vars = []
+    admissible_vars = []
 
 
 class Product(Model):
     """Clase producto, hereda de Model"""
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    required_vars = []
+    admissible_vars = []
 
 
 class Sale(Model):
     """Clase venta, hereda de Model"""
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
+    required_vars = []
+    admissible_vars = []
     def allocate():
         pass
 
 
 class Provider(Model):
     """Clase proveedor, hereda de Model"""
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    required_vars = []
+    admissible_vars = []
+    #def __init__(self, **kwargs):
+    #    super().__init__(**kwargs)
 
 
 # Q1: Listado de todas las compras de un cliente
@@ -150,11 +150,12 @@ Q1 = []
 # Q2: etc...
 
 if __name__ == '__main__':
-    #cliente = Client(n="2", i="0")
     client = MongoClient()
     db = client.data
     Provider.init_class(db, PROVIDER_VARS_PATH)
+    Client.init_class(db, CLIENT_VARS_PATH)
+    Sale.init_class(db, SALE_VARS_PATH)
+    Product.init_class(db, PRODUCT_VARS_PATH)
     proveedores = db.proveedores
     p = Provider(**proveedores.find_one())
     print (p.direcciones)
-#mongoimport --db data --collection clientes --drop --file ~/Downloads/clientes(1).json
