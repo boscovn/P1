@@ -9,6 +9,8 @@ PRODUCT_VARS_PATH = "Vars/product.ini"
 PROVIDER_VARS_PATH = "Vars/provider.ini"
 SALE_VARS_PATH = "Vars/sale.ini"
 SLEEP_TIME = 5
+
+
 def getCityGeoJSON(adress):
     """ Devuelve las coordenadas de una direcciion a partir de un str de la direccion
     Argumentos:
@@ -23,9 +25,11 @@ def getCityGeoJSON(adress):
         geolocator = Nominatim(user_agent="practica-abbdd")
         location = geolocator.geocode(adress)
         sleep(SLEEP_TIME)
-        geojson = json.dumps({'type': 'Point', 'coordinates' : [location.latitude, location.longitude]})
+        geojson = json.dumps({'type': 'Point', 'coordinates': [
+                             location.latitude, location.longitude]})
         adresses[adress] = geojson
         return geojson
+
 
 class ModelCursor:
     """ Cursor para iterar sobre los documentos del resultado de una
@@ -51,6 +55,7 @@ class ModelCursor:
         """
         return self.command_cursor.alive
 
+
 class Model:
     db = None
 
@@ -61,7 +66,8 @@ class Model:
         for k, v in kwargs.items():
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
-                    print ("Variable {} not admitted for the {} class".format(k, type(self).__name__))
+                    print("Variable {} not admitted for the {} class".format(
+                        k, type(self).__name__))
                 else:
                     additional_ad.append(k)
                     setattr(self, k, v)
@@ -69,16 +75,17 @@ class Model:
                 required_check.remove(k)
                 setattr(self, k, v)
         if required_check:
-            raise ValueError("Not all the required attributes were given, missing {}".format(required_check))
+            raise ValueError(
+                "Not all the required attributes were given, missing {}".format(required_check))
             return
         self.admissible_vars.clear()
         self.admissible_vars.extend(additional_ad)
 
     def save(self):
         #check_existing = db[self.collection].find_one({'_id':self._id})
-        #if check_existing.retrieved() > 0:
+        # if check_existing.retrieved() > 0:
         #    self.update(**check_existing)
-        #else:
+        # else:
         doc = {}
         for v in self.required_vars + self.admissible_vars:
             doc[v] = getattr(self, v)
@@ -91,10 +98,10 @@ class Model:
                     del doc[k]
             self.update(**doc)"""
 
-
     def update(self, **kwargs):
         for k, v in kwargs:
-            db[collection].update_one({'_id': self._id}, {'$set': {k: getattr(self, k)}})
+            db[collection].update_one(
+                {'_id': self._id}, {'$set': {k: getattr(self, k)}})
 
     @classmethod
     def query(cls, query):
@@ -107,7 +114,7 @@ class Model:
     def init_class(cls, db, vars_path):
         cls.db = db
         import configparser
-        config = configparser.ConfigParser(allow_no_value = True)
+        config = configparser.ConfigParser(allow_no_value=True)
         config.read(vars_path)
         cls.required_vars.extend(config['Required Variables'])
         cls.admissible_vars.extend(config['Admitted Variables'])
@@ -129,14 +136,16 @@ class Sale(Model):
     required_vars = []
     admissible_vars = []
     collection = 'ventas'
+
     def allocate():
-        pass#TODO
+        pass  # TODO
 
 
 class Provider(Model):
     required_vars = []
     admissible_vars = []
     collection = 'proveedores'
+
 
 client = MongoClient()
 db = client.data
@@ -156,12 +165,12 @@ if __name__ == '__main__':
     n = ModelCursor(Provider, proveedores.find())
     p = n.next()
     print(p)
-    for k, v in db[pu].find_one():
-        print("{} {}".format(k, v))
+    for k in db[pu].find_one():
+        print("{}".format(k))
     try:
         m = Provider(_id=1, nombre="dos", direcciones=["Madrid", "Salamanca"])
     except ValueError as err:
-        print (err)
+        print(err)
     else:
         m.save()
     #print (p.direcciones)
