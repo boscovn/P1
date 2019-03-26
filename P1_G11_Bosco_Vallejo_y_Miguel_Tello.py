@@ -1,6 +1,6 @@
 # coding=utf-8
 __author__ = 'Bosco_Vallejo-Nágera y Miguel Tello'
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 import json
 from time import sleep
 adresses = {}
@@ -75,26 +75,32 @@ class Model:
         self.admissible_vars.extend(additional_ad)
 
     def save(self):
-        check_existing = db[collection].find_one({'_id':self.id})
-        if check_existing.retrieved() > 0:
-            self.update(**check_existing)
-        else:
-            doc = {}
-            for v in self.required_vars + self.admissible_vars:
-                doc[v] = getattr(self, v)
-            db[collection].insert_one(doc)
+        #check_existing = db[self.collection].find_one({'_id':self._id})
+        #if check_existing.retrieved() > 0:
+        #    self.update(**check_existing)
+        #else:
+        doc = {}
+        for v in self.required_vars + self.admissible_vars:
+            doc[v] = getattr(self, v)
+        try:
+            db[self.collection].insert_one(doc)
+        except errors.DuplicateKeyError as err:
+            print(err)
+            """for k, v in **db[self.collection].find_one({'_id': self._id}):
+                if doc[k] == v:
+                    del doc[k]
+            self.update(**doc)"""
+
 
     def update(self, **kwargs):
         for k, v in kwargs:
-            value = getattr(self, k)
-            if value != v:
-                db[collection].update_one({'_id': self._id}, {'$set': {k: value}})
+            db[collection].update_one({'_id': self._id}, {'$set': {k: getattr(self, k)}})
 
     @classmethod
     def query(cls, query):
         """ Devuelve un cursor de modelos
         """
-        cursor = db[collection].find(query)
+        cursor = db[self.collection].find(query)
         return ModelCursor(cls, cursor)
 
     @classmethod
@@ -147,8 +153,15 @@ Q1 = []
 if __name__ == '__main__':
     pu = 'proveedores'
     proveedores = db[pu]
-    p = Provider(**proveedores.find_one())
-    print (p.direcciones)
-    findeo = proveedores.find({"_id": p._id})
-    n = ModelCursor(Provider, findeo)
-    y = n.next()
+    n = ModelCursor(Provider, proveedores.find())
+    p = n.next()
+    print(p)
+    for k, v in db[pu].find_one():
+        print("{} {}".format(k, v))
+    try:
+        m = Provider(_id=1, nombre="dos", direcciones=["Madrid", "Salamanca"])
+    except ValueError as err:
+        print (err)
+    else:
+        m.save()
+    #print (p.direcciones)
