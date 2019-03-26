@@ -1,3 +1,4 @@
+# coding=utf-8
 __author__ = 'Bosco_Vallejo-Nágera y Miguel Tello'
 from pymongo import MongoClient
 import json
@@ -39,7 +40,10 @@ class ModelCursor:
     def next(self):
         """ Devuelve el siguiente documento en forma de modelo
         """
-        return self.model_class(**self.command_cursor.next())
+        try:
+            return self.model_class(**self.command_cursor.next())
+        except ValueError as err:
+            print(err)
 
     @property
     def alive(self):
@@ -52,30 +56,39 @@ class Model:
 
     def __init__(self, **kwargs):
         required_check = []
+        additional_ad = []
         required_check.extend(self.required_vars)
         for k, v in kwargs.items():
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
-                    print ("Variable {} no admitida".format(k))
+                    print ("Variable {} not admitted for the {} class".format(k, type(self).__name__))
                 else:
+                    additional_ad.append(k)
                     setattr(self, k, v)
             else:
                 required_check.remove(k)
                 setattr(self, k, v)
         if required_check:
-            print ("No tiene lo necesario, faltan variables: ")
-            print (required_check)
-            #TODO excepcion
+            raise ValueError("Not all the required attributes were given, missing {}".format(required_check))
+            return
+        self.admissible_vars.clear()
+        self.admissible_vars.extend(additional_ad)
 
     def save(self):
-        doc = {}
-
-        db[collection].insert_one(self)
-        pass #No olvidar eliminar esta linea una vez implementado
+        check_existing = db[collection].find_one({'_id':self.id})
+        if check_existing.retrieved() > 0:
+            self.update(**check_existing)
+        else:
+            doc = {}
+            for v in self.required_vars + self.admissible_vars:
+                doc[v] = getattr(self, v)
+            db[collection].insert_one(doc)
 
     def update(self, **kwargs):
-        #TODO
-        pass #No olvidar eliminar esta linea una vez implementado
+        for k, v in kwargs:
+            value = getattr(self, k)
+            if value != v:
+                db[collection].update_one({'_id': self._id}, {'$set': {k: value}})
 
     @classmethod
     def query(cls, query):
@@ -111,7 +124,7 @@ class Sale(Model):
     admissible_vars = []
     collection = 'ventas'
     def allocate():
-        pass
+        pass#TODO
 
 
 class Provider(Model):
