@@ -53,7 +53,12 @@ class ModelCursor:
     def alive(self):
         """True si existen más modelos por devolver, False en caso contrario
         """
-        return self.command_cursor.alive
+        return self._alive
+
+    @alive.setter
+    def alive(self):
+        self._alive = self.command_cursor.alive
+
 
 
 class Model:
@@ -82,10 +87,6 @@ class Model:
         self.admissible_vars.extend(additional_ad)
 
     def save(self):
-        #check_existing = db[self.collection].find_one({'_id':self._id})
-        # if check_existing.retrieved() > 0:
-        #    self.update(**check_existing)
-        # else:
         doc = {}
         for v in self.required_vars + self.admissible_vars:
             doc[v] = getattr(self, v)
@@ -93,21 +94,19 @@ class Model:
             db[self.collection].insert_one(doc)
         except errors.DuplicateKeyError as err:
             print(err)
-            """for k, v in **db[self.collection].find_one({'_id': self._id}):
+            for k, v in db[self.collection].find_one({'_id': self._id}).items():
                 if doc[k] == v:
                     del doc[k]
-            self.update(**doc)"""
+            self.update(**doc)
 
     def update(self, **kwargs):
-        for k, v in kwargs:
-            db[collection].update_one(
-                {'_id': self._id}, {'$set': {k: getattr(self, k)}})
+        for k, v in kwargs.items():
+            db[self.collection].update_one(
+                {'_id': self._id}, {'$set': {k: v}})
 
     @classmethod
     def query(cls, query):
-        """ Devuelve un cursor de modelos
-        """
-        cursor = db[self.collection].find(query)
+        cursor = db[self.collection].aggregate(query)
         return ModelCursor(cls, cursor)
 
     @classmethod
@@ -164,11 +163,8 @@ if __name__ == '__main__':
     proveedores = db[pu]
     n = ModelCursor(Provider, proveedores.find())
     p = n.next()
-    print(p)
-    for k in db[pu].find_one():
-        print("{}".format(k))
     try:
-        m = Provider(_id=1, nombre="dos", direcciones=["Madrid", "Salamanca"])
+        m = Provider(_id=2, nombre="dosioo", direcciones=["Madrid", "Salamanca"])
     except ValueError as err:
         print(err)
     else:
