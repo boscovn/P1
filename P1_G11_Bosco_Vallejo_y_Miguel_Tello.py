@@ -61,7 +61,6 @@ class ModelCursor:
         return self.command_cursor.alive
 
 
-
 class Model:
     db = None
 
