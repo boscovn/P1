@@ -44,20 +44,21 @@ class ModelCursor:
     def next(self):
         """ Devuelve el siguiente documento en forma de modelo
         """
-        try:
-            return self.model_class(**self.command_cursor.next())
-        except ValueError as err:
-            print(err)
+        if self.alive:
+            try:
+                return self.model_class(**self.command_cursor.next())
+            except ValueError as err:
+                print(err)
+            except StopIteration:
+                print("No more documents available in cursor")
+        else:
+            print("No more documents avaliable in cursor")
 
     @property
     def alive(self):
         """True si existen más modelos por devolver, False en caso contrario
         """
-        return self._alive
-
-    @alive.setter
-    def alive(self):
-        self._alive = self.command_cursor.alive
+        return self.command_cursor.alive
 
 
 
@@ -68,6 +69,7 @@ class Model:
         required_check = []
         additional_ad = []
         required_check.extend(self.required_vars)
+        self._id = None
         for k, v in kwargs.items():
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
@@ -85,19 +87,24 @@ class Model:
             return
         self.admissible_vars.clear()
         self.admissible_vars.extend(additional_ad)
+        if self._id is None:
+            self.save()
 
     def save(self):
         doc = {}
         for v in self.required_vars + self.admissible_vars:
             doc[v] = getattr(self, v)
         try:
-            db[self.collection].insert_one(doc)
+            x = db[self.collection].insert_one(doc)
         except errors.DuplicateKeyError as err:
             print(err)
             for k, v in db[self.collection].find_one({'_id': self._id}).items():
                 if doc[k] == v:
                     del doc[k]
             self.update(**doc)
+        else:
+            self._id = x.inserted_id
+            self.admissible_vars.append("_id")
 
     def update(self, **kwargs):
         for k, v in kwargs.items():
@@ -106,7 +113,7 @@ class Model:
 
     @classmethod
     def query(cls, query):
-        cursor = db[self.collection].aggregate(query)
+        cursor = db[cls.collection].aggregate(query)
         return ModelCursor(cls, cursor)
 
     @classmethod
@@ -134,7 +141,7 @@ class Product(Model):
 class Sale(Model):
     required_vars = []
     admissible_vars = []
-    collection = 'ventas'
+    collection = 'compras'
 
     def allocate():
         pass  # TODO
@@ -154,19 +161,13 @@ Sale.init_class(db, SALE_VARS_PATH)
 Product.init_class(db, PRODUCT_VARS_PATH)
 
 # Q1: Listado de todas las compras de un cliente
-nombre_cliente = "Definir"
+nombre_cliente = "Juan"
 Q1 = []
+pipeline = [{'$match': {'cliente': nombre_cliente}}]
+Q1_cursor = Sale.query(pipeline)
+while Q1_cursor.alive:
+    Q1.append(Q1_cursor.next())
 # Q2: etc...
 
 if __name__ == '__main__':
-    pu = 'proveedores'
-    proveedores = db[pu]
-    n = ModelCursor(Provider, proveedores.find())
-    p = n.next()
-    try:
-        m = Provider(_id=2, nombre="dosioo", direcciones=["Madrid", "Salamanca"])
-    except ValueError as err:
-        print(err)
-    else:
-        m.save()
-    #print (p.direcciones)
+    pass
