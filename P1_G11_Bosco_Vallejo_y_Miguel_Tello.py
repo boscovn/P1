@@ -9,6 +9,7 @@ PRODUCT_VARS_PATH = "Vars/product.ini"
 PROVIDER_VARS_PATH = "Vars/provider.ini"
 SALE_VARS_PATH = "Vars/sale.ini"
 SLEEP_TIME = 5
+ADRESS_SUBSTRING = "direccion"
 
 
 def getCityGeoJSON(adress):
@@ -63,6 +64,7 @@ class ModelCursor:
 
 class Model:
     db = None
+    adress_coordinates=[]
 
     def __init__(self, **kwargs):
         required_check = []
@@ -70,6 +72,11 @@ class Model:
         required_check.extend(self.required_vars)
         self._id = None
         for k, v in kwargs.items():
+            if ADRESS_SUBSTRING in k:
+                for addr in v:
+                    print(v)
+                    self.adress_coordinates.append(getCityGeoJSON(addr))
+                print(k)
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
                     print("Variable {} not admitted for the {} class".format(
