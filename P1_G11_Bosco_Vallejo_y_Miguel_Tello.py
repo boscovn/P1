@@ -160,7 +160,7 @@ Sale.init_class(db, SALE_VARS_PATH)
 Product.init_class(db, PRODUCT_VARS_PATH)
 
 # Q1: Listado de todas las compras de un cliente
-nombre_cliente = "Juan"
+nombre_cliente = "Ramon"
 Q1 = []
 pipeline = [{'$match': {'cliente': nombre_cliente}}]
 Q1_cursor = Sale.query(pipeline)
@@ -168,8 +168,29 @@ while Q1_cursor.alive:
     instance = Q1_cursor.next()
     if instance is not None:
         Q1.append(instance)
-# Q2: etc...
+# Q2: Listado de todos los proveedores para un producto
+nombre_producto = "tv"
+Q2 = []
+pipeline = [{'$match': {'nombre': nombre_producto}}]
+Q2_cursor = Product.query(pipeline)
+while Q2_cursor.alive:
+    instance = Q2_cursor.next()
+    if instance is not None:
+        Q2.extend(instance.proveedores)
+Q2 = list(dict.fromkeys(Q2))
+# Q3 Listado de todos los productos diferentes comprados por un cliente
+nombre_cliente = "Emilia"
+Q3 = []
+pipeline = [{'$match': {'cliente': nombre_cliente}}]
+Q3_cursor = Sale.query(pipeline)
+while Q3_cursor.alive:
+    instance = Q3_cursor.next()
+    if instance is not None:
+        Q3.extend(instance.productos)
+Q3 = list(dict.fromkeys(Q3))
 
 if __name__ == '__main__':
     for k in Q1:
         print("{} {}".format(k._id, k.precio_de_compra))
+    print(Q2)
+    print(Q3)
