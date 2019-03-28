@@ -1,1 +1,8 @@
-{"_id":{"$oid":"5c93e9f673e8a504e1624883"},"nombre":"sansun","direcciones":["Barcelona"]}
+{"_id":{"$oid":"5c951cbc3aaaf426fb138bda"},"nombre":"sansun","direcciones":["Barcelona","Zaragoza"]}
+{"_id":{"$oid":"5c951cbc3aaaf426fb138bdb"},"nombre":"rolex","direcciones":["Barcelona"]}
+{"_id":{"$oid":"5c951cbc3aaaf426fb138bdc"},"nombre":"addidas","direcciones":["Bilbao"]}
+{"_id":{"$oid":"5c951cbc3aaaf426fb138bdd"},"nombre":"ibm","direcciones":["Zaragoza"]}
+{"_id":{"$oid":"5c951cbc3aaaf426fb138bde"},"nombre":"bandai","direcciones":["Merida"]}
+{"_id":{"$oid":"5c951cbc3aaaf426fb138bdf"},"nombre":"talgo","direcciones":["Madrid","Bilbao"]}
+{"_id":{"$oid":"5c951cbc3aaaf426fb138be0"},"nombre":"volskwagen","direcciones":["Madrid","Barcelona"]}
+{"_id":{"$oid":"5c951cbf3aaaf426fb138be1"},"nombre":"Delonghi","direcciones":["Toledo"]}

@@ -1,1 +1,14 @@
-{"_id":1.0,"cliente":"Juan","producto":"mobil","fecha":{"$date":"2019-03-21T19:46:36.503Z"},"direccion":["Madrid"]}
+{"_id":1.0,"cliente":"Juan","productos":["mobil"],"precio_de_compra":"12","fecha":{"$date":"2019-03-22T17:35:25.683Z"},"direccion":["Madrid"]}
+{"_id":2.0,"cliente":"Juan","productos":["mobil","mobil","mobil","mobil","tv"],"precio_de_compra":"168","fecha":{"$date":"2019-03-22T17:35:25.693Z"},"direccion":["Madrid"]}
+{"_id":3.0,"cliente":"Emma","productos":["impresora"],"precio_de_compra":"480","fecha":{"$date":"2019-03-22T17:35:25.704Z"},"direccion":["Madrid"]}
+{"_id":4.0,"cliente":"Mia","productos":["locomotora","vagon"],"precio_de_compra":"600000","fecha":{"$date":"2019-03-22T17:35:25.713Z"},"direccion":["Valencia"]}
+{"_id":5.0,"cliente":"Emilia","productos":["vw passat","tostadora"],"precio_de_compra":"60048","fecha":{"$date":"2019-03-22T17:35:25.725Z"},"direccion":["Pontevedra"]}
+{"_id":6.0,"cliente":"Ramon","productos":["cafetera","tostadora"],"precio_de_compra":"96","fecha":{"$date":"2019-03-22T17:35:25.733Z"},"direccion":["Sevilla"]}
+{"_id":7.0,"cliente":"Huan","productos":["vw golf","vagon"],"precio_de_compra":"168000","fecha":{"$date":"2019-03-22T17:35:25.739Z"},"direccion":["Pontevedra"]}
+{"_id":8.0,"cliente":"Huan","productos":["mochila"],"precio_de_compra":"48","fecha":{"$date":"2019-03-22T17:35:25.746Z"},"direccion":["Pontevedra"]}
+{"_id":9.0,"cliente":"Toshi","productos":["portatil","zapatillas","reloj","castillo de juguete"],"precio_de_compra":"636","fecha":{"$date":"2019-03-22T17:35:25.758Z"},"direccion":["Barcelona"]}
+{"_id":10.0,"cliente":"Toshi","productos":["tostadora"],"precio_de_compra":"48","fecha":{"$date":"2019-03-22T17:35:25.765Z"},"direccion":["Barcelona"]}
+{"_id":11.0,"cliente":"Vladimir","productos":["mochila","jersey","figura de accion"],"precio_de_compra":"102","fecha":{"$date":"2019-03-22T17:35:25.776Z"},"direccion":["Ciudad Real"]}
+{"_id":12.0,"cliente":"Vladimir","productos":["vw golf"],"precio_de_compra":"48","fecha":{"$date":"2019-03-22T17:35:25.783Z"},"direccion":["Ciudad Real"]}
+{"_id":13.0,"cliente":"Yoao","productos":["reloj inteligente","mobil","tv","portatil"],"precio_de_compra":"1092","fecha":{"$date":"2019-03-22T17:35:25.797Z"},"direccion":["Segovia"]}
+{"_id":14.0,"cliente":"Yoao","productos":["cafetera"],"precio_de_compra":"48","fecha":{"$date":"2019-03-22T17:35:31.147Z"},"direccion":["Segovia"]}
