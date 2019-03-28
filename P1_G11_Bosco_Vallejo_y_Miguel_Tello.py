@@ -165,8 +165,11 @@ Q1 = []
 pipeline = [{'$match': {'cliente': nombre_cliente}}]
 Q1_cursor = Sale.query(pipeline)
 while Q1_cursor.alive:
-    Q1.append(Q1_cursor.next())
+    instance = Q1_cursor.next()
+    if instance is not None:
+        Q1.append(instance)
 # Q2: etc...
 
 if __name__ == '__main__':
-    pass
+    for k in Q1:
+        print("{} {}".format(k._id, k.precio_de_compra))
