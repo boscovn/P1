@@ -3,32 +3,32 @@ __author__ = 'Bosco_Vallejo-Nágera y Miguel Tello'
 from pymongo import MongoClient, errors
 import json
 from time import sleep
-adresses = {}
+addresses = {}
 CLIENT_VARS_PATH = "Vars/client.ini"
 PRODUCT_VARS_PATH = "Vars/product.ini"
 PROVIDER_VARS_PATH = "Vars/provider.ini"
 SALE_VARS_PATH = "Vars/sale.ini"
 SLEEP_TIME = 5
-ADRESS_SUBSTRING = "direccion"
+ADDRESS_SUBSTRING = "direccion"
 
 
-def getCityGeoJSON(adress):
-    """ Devuelve las coordenadas de una direcciion a partir de un str de la direccion
+def getCityGeoJSON(address):
+    """ Devuelve las coordenadas de una direccion a partir de un str de la direccion
     Argumentos:
-        adress (str) -- Direccion
+        address (str) -- Direccion
     Return:
         (str) -- GeoJSON
     """
-    if adress in adresses:
-        return adresses[adress]
+    if address in addresses:
+        return addresses[address]
     else:
         from geopy.geocoders import Nominatim
         geolocator = Nominatim(user_agent="practica-abbdd")
-        location = geolocator.geocode(adress)
+        location = geolocator.geocode(address)
         sleep(SLEEP_TIME)
         geojson = json.dumps({'type': 'Point', 'coordinates': [
                              location.latitude, location.longitude]})
-        adresses[adress] = geojson
+        addresses[address] = geojson
         return geojson
 
 
@@ -48,7 +48,7 @@ class ModelCursor:
         if self.alive:
             try:
                 return self.model_class(**self.command_cursor.next())
-            except ValueError as err:
+            except AttributeError as err:
                 print(err)
             except StopIteration:
                 print("No more documents available in cursor")
@@ -64,7 +64,7 @@ class ModelCursor:
 
 class Model:
     db = None
-    adress_coordinates=[]
+    address_coordinates = []
 
     def __init__(self, **kwargs):
         required_check = []
@@ -72,11 +72,12 @@ class Model:
         required_check.extend(self.required_vars)
         self._id = None
         for k, v in kwargs.items():
-            if ADRESS_SUBSTRING in k:
+            if ADDRESS_SUBSTRING in k:
+                dict = {}
                 for addr in v:
-                    print(v)
-                    self.adress_coordinates.append(getCityGeoJSON(addr))
-                print(k)
+                    dict[v][addr] = getCityGeoJSON(addr)
+                    # self.address_coordinates.append(getCityGeoJSON(addr))
+                setattr(self, k, dict)
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
                     print("Variable {} not admitted for the {} class".format(
@@ -88,7 +89,7 @@ class Model:
                 required_check.remove(k)
                 setattr(self, k, v)
         if required_check:
-            raise ValueError(
+            raise AttributeError(
                 "Not all the required attributes were given, missing {}".format(required_check))
             return
         self.admissible_vars.clear()
@@ -150,7 +151,15 @@ class Sale(Model):
     collection = 'compras'
 
     def allocate():
-        pass  # TODO
+        closest_warehouse = {}
+        warehouses = []
+        """
+        ACOPLAMIENTO!!
+        """
+        for product in self.productos:
+            for provider in db.productos.find_one('nombre': product)["proveedores"]:
+                for addr in db.productos.find_one('nombre': provider)["direcciones"]:
+                    pass
 
 
 class Provider(Model):
