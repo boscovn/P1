@@ -72,12 +72,12 @@ class Model:
         required_check.extend(self.required_vars)
         self._id = None
         for k, v in kwargs.items():
-            if ADDRESS_SUBSTRING in k:
+            """if ADDRESS_SUBSTRING in k:
                 dict = {}
                 for addr in v:
                     dict[v][addr] = getCityGeoJSON(addr)
                     # self.address_coordinates.append(getCityGeoJSON(addr))
-                setattr(self, k, dict)
+                setattr(self, k, dict)"""
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
                     print("Variable {} not admitted for the {} class".format(
