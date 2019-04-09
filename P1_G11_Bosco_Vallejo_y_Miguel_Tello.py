@@ -64,7 +64,6 @@ class ModelCursor:
 
 class Model:
     db = None
-    address_coordinates = []
 
     def __init__(self, **kwargs):
         required_check = []
@@ -72,12 +71,13 @@ class Model:
         required_check.extend(self.required_vars)
         self._id = None
         for k, v in kwargs.items():
-            """if ADDRESS_SUBSTRING in k:
+            if ADDRESS_SUBSTRING in k:
                 dict = {}
                 for addr in v:
-                    dict[v][addr] = getCityGeoJSON(addr)
-                    # self.address_coordinates.append(getCityGeoJSON(addr))
-                setattr(self, k, dict)"""
+                    dict[addr] = getCityGeoJSON(addr)
+                required_check.remove(k)
+                setattr(self, k, dict)
+                continue
             if k not in self.required_vars:
                 if k not in self.admissible_vars:
                     print("Variable {} not admitted for the {} class".format(
@@ -153,13 +153,18 @@ class Sale(Model):
     def allocate():
         closest_warehouse = {}
         warehouses = []
-        """
-        ACOPLAMIENTO!!
-        """
         for product in self.productos:
-            for provider in db.productos.find_one('nombre': product)["proveedores"]:
-                for addr in db.productos.find_one('nombre': provider)["direcciones"]:
-                    pass
+            cursor = Product.query({'$match': {'nombre': product}})
+            provider_list = []
+            while cursor.alive:
+                instance = cursor.next
+                if instance is not None:
+                    provider_list.extend(instance.proveedores)
+            addrs = {}
+            for provider in provider_list:
+                cursor_two = Provider.query({'$match': {'nombre': product}})
+
+
 
 
 class Provider(Model):
@@ -207,6 +212,6 @@ Q3 = list(dict.fromkeys(Q3))
 
 if __name__ == '__main__':
     for k in Q1:
-        print("{} {}".format(k._id, k.precio_de_compra))
+        print("{} {}".format(k._id, k.direccion))
     print(Q2)
     print(Q3)
